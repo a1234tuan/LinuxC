@@ -1,5 +1,7 @@
-
-
+#include<stdlib.h>
+#include<pthread.h>
+#include<stdio.h>
+#include<string.h>
 #define LIST_INSERT(item, list) do { \
     if (list != NULL) list->prev = item; \
     item->prev = NULL; \
@@ -26,11 +28,12 @@ struct nTask{
     //以链表形式来存储任务队列
     struct nTask *prev;
     struct nTask *next;
-}
+};
 
 //关于任务的执行
 struct nWorker{
     pthread_t threadid;
+    int terminate;
     struct nManager *manager;//柜员的上级部门，大堂经理
     struct nWorker *prev;
     struct nWorker *next;
@@ -49,9 +52,9 @@ typedef struct nManager{
 }ThreadPool;
 
 //线程回调函数
-static *nThreadPoolCallBack(void *arg){
+static void *nThreadPoolCallBack(void *arg){
     //线程就是一直在等待任务队列中是否有任务
-    struct nWorkers *worker = (struct nWorkers*)arg;
+    struct nWorker *worker = (struct nWorker*)arg;
     printf("nThreadPoolCallback\n");
     while(1){
         pthread_mutex_lock(&worker->manager->mutex);
@@ -72,7 +75,7 @@ static *nThreadPoolCallBack(void *arg){
 
         pthread_mutex_unlock(&worker->manager->mutex);
         //任务开始执行：
-        task->task_func(task->user_data);
+        task->task_func(task);
     }
 
     free(worker);
@@ -84,10 +87,10 @@ static *nThreadPoolCallBack(void *arg){
 int nThreadPoolCreate(ThreadPool *pool, int numWorkers){//numWorker就是多少种方法
     //参数的校验
     if(pool == NULL) return -1;
-    if(nWorker < 1) nWorker = 1;
+    if(numWorkers < 1) numWorkers = 1;
     memset(pool,0,sizeof(ThreadPool));
         //初始化
-    pthread_cond_t blank_cond = PTHREAD_COND_INITALIZER;//定义一个空白的锁
+    pthread_cond_t blank_cond = PTHREAD_COND_INITIALIZER;//定义一个空白的锁
     memcpy(&pool->cond,&blank_cond,sizeof(pthread_cond_t));
 
     //mutex初始化
@@ -124,15 +127,15 @@ int nThreadPoolCreate(ThreadPool *pool, int numWorkers){//numWorker就是多少�
 int nThreadPoolDestory(ThreadPool *pool, int nWorker){
     struct nWorker *worker = NULL;
 
-    for(worker = pool->workers;worker != NULL;worker=worker->next){
-        worker->terminate;
+    for(worker = pool->nWorkers;worker != NULL;worker=worker->next){
+        worker->terminate=1;
     }
     //做一个条件广播
     pthread_mutex_lock(&pool->mutex);//这把锁和在条件等待时候是同一把锁,所以不会出现死锁
     pthread_cond_broadcast(&pool->cond);
     pthread_mutex_unlock(&pool->mutex);
 
-    pool->workers=NULL;
+    pool->nWorkers=NULL;
     pool->tasks=NULL;
 
     return 0;
