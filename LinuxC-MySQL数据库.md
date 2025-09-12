@@ -14,7 +14,7 @@ node server：节点服务器 【业务逻辑的实现】
 
 客户端服务器
 
-![image-20250912150227203](pic\C_Mysql_API\MySQL数据库架构图1.png)
+![image-20250912150227203](pic/C_Mysql_API/MySQL数据库架构图1.png)
 
 # 支持远程连接服务器
 
@@ -46,7 +46,7 @@ sudo ufw reload
 
 # 我的首次连接配置信息
 
-![image-20250912161739709](pic\C_Mysql_API\MySQLWB配置.png)
+![image-20250912161739709](pic/C_Mysql_API/MySQLWB配置.png)
 
 通过：
 
@@ -142,7 +142,7 @@ flush privileges;
 
 # C API上操作MySQL数据库
 
-![image-20250912181919466](pic\C_Mysql_API\MySQL数据库架构图3.png)
+![image-20250912181919466](pic/C_Mysql_API/MySQL数据库架构图3.png)
 
 ## 数据库建模
 
