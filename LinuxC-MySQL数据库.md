@@ -310,3 +310,8 @@ gcc -o mysql mysql.c $(mysql_config --cflags) $(mysql_config --libs)
 
    - `mysql_close()` → 断开连接。
    - 必须做，不然资源泄漏。
+
+## 在Node Server上写代码操作DB SERVER
+
+### mysql数据库的查询操作：
+
