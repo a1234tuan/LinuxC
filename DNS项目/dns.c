@@ -79,7 +79,7 @@ int dns_create_question(struct dns_question *question, const char *hostname) {
 
 // 打包 DNS 请求
 int dns_build_requestion(struct dns_header *header, struct dns_question *question, char *request, int rlen) {
-    if (header == NULL || question == NULL || request == NULL) return -1;
+    if (header == NULL || question == NULL || request == NULL || rlen <= 0) return -1;
     memset(request, 0, rlen);
 
     int offset = 0;
